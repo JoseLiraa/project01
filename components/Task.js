@@ -11,7 +11,7 @@ export default Task = (props) => {
             value = {props.isSelected}
             onValueChange={(value) => props.setIsSelected(props.index, value)}
             />               
-                <Text style={style.textItem}>{props.text}</Text>
+                <Text style={style.textItem}>{props.text} </Text>
             </View>
             <TouchableOpacity style={style.circular} disabled = {props.isSelected} onLongPress={() => props.deleteItem(props.index)}></TouchableOpacity>
         </View>
