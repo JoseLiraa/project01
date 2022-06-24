@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ScrollView,  
   StyleSheet,
@@ -11,7 +11,7 @@ import {
   Keyboard,
   Alert,
 } from 'react-native';
-import Task from './components/Task';
+import Task from './src/Components/Task';
 
 export default function App(){
   const [task, setTask] = useState("");
@@ -22,25 +22,11 @@ export default function App(){
     if(task == "" ){
       alert("Please type something");
     }else if(taskItem.length <= 9){
-      //setTask([...task, {isSelected:false}])
-      setTaskItem([...taskItem,task])
+      setTaskItem(prev => [{value: task, isCompleted: false}, ...prev])
       setTask("");
     }else{
       alert("You can only enter 10 task at a time!")
 }}
-
-let isSelected = Boolean;
-function setIsSelected(index, value){
-  let data = []
-  
-  for(let i=0; i < taskItem.length; i++){
-    if(index === i){
-      data.push({...taskItem, isSelected: value})  
-    }else{
-      data.push(taskItem[i])    
-    }
-  }
-}
 
 function deleteItem(index){
   Alert.alert(
@@ -61,24 +47,31 @@ function deleteItem(index){
       ])
 }
 
+  const markCompleted = (index) => {
+    const localCopy  = [...taskItem];
+    localCopy[index].isCompleted = !localCopy[index].isCompleted;
+    localCopy.sort((a, b) => a.isCompleted - b.isCompleted);
+    setTaskItem(localCopy);
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.taskContainer}>
         <Text style={styles.titleSection}>Today's tasks</Text>
         <View style={styles.items}>
           {            
-            taskItem.map((item, index) => {
-              return <Task index = {index} text = {item} setIsSelected={setIsSelected} deleteItem={deleteItem}/>
-            }).reverse()
+            taskItem.map(({value, isCompleted}, index) => {
+              return <Task key={`${index}-${value}`} setIsCompleted={markCompleted} isCompleted={isCompleted} index={index} text={value} deleteItem={deleteItem}/>
+            })
           }
         </View>
       </ScrollView>
 
 
       <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style = {styles.typedTaskWrapper}      
-      >
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style = {styles.typedTaskWrapper}      
+        >
         <TextInput style = {styles.input} 
         placeholder = {'Write a task'} value = {task} onChangeText={text => setTask(text)}>          
         </TextInput>
