@@ -14,30 +14,30 @@ import {
 import Task from './components/Task';
 
 export default function App(){
-  const [task, setTask] = useState("");
+  const [task, setTask] = useState();
   const [taskItem, setTaskItem] = useState([]);
 
-  const handleAddTask = (text) => {
+  const handleAddTask = () => {
     Keyboard.dismiss();
-    if(task == "" ){
+    if(task == null ){
       alert("Please type something");
     }else if(taskItem.length <= 9){
-      //setTask([...task, {isSelected:false}])
       setTaskItem([...taskItem,task])
-      setTask("");
+      setTask(null);
     }else{
       alert("You can only enter 10 task at a time!")
 }}
 
-let isSelected = Boolean;
 function setIsSelected(index, value){
   let data = []
   
   for(let i=0; i < taskItem.length; i++){
     if(index === i){
-      data.push({...taskItem, isSelected: value})  
+      data.push({...taskItem, isSelected: value})
+      console.log("estoy aqui 1",index, value);      
     }else{
       data.push(taskItem[i])    
+      console.log("estoy aqui 2",index);  
     }
   }
 }
@@ -53,6 +53,7 @@ function deleteItem(index){
           },
           {
               text: "Yes", onPress: () => {
+              console.log("estoy aqui 3",index); 
               let itemsCopy = [...taskItem];
               itemsCopy.splice(index,1);
               setTaskItem(itemsCopy);
@@ -68,7 +69,7 @@ function deleteItem(index){
         <View style={styles.items}>
           {            
             taskItem.map((item, index) => {
-              return <Task index = {index} text = {item} setIsSelected={setIsSelected} deleteItem={deleteItem}/>
+              return <Task key = {index} text = {item} setIsSelected={setIsSelected} deleteItem={deleteItem}/>
             }).reverse()
           }
         </View>
@@ -82,7 +83,7 @@ function deleteItem(index){
         <TextInput style = {styles.input} 
         placeholder = {'Write a task'} value = {task} onChangeText={text => setTask(text)}>          
         </TextInput>
-        <TouchableOpacity onPress={() => handleAddTask(task)}>
+        <TouchableOpacity onPress={() => handleAddTask()}>
           <View style = {styles.buttonWrapper}>
             <Text style = {styles.buttonText}>+</Text>
           </View>
